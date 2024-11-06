@@ -36,4 +36,8 @@ public class Aluno {
         }
         return true;
     }
+
+    public String toString() {
+        return "ID: " + this.Id + " Nome: " + this.Nome + " Data de Nascimento: " + this.DataNascimento + " CPF: " + this.CPF + " ID Curso: " + this.IdCurso;
+    }
 }

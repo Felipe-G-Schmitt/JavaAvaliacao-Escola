@@ -24,4 +24,8 @@ public class Professor {
         }
         return false;
     }
-}
+
+
+public String toString() {
+    return "ID: " + this.Id + " Nome: " + this.Nome + " Departamento: " + this.Departamento;
+}}

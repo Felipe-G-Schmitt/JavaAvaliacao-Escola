@@ -1,7 +1,15 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 public class Menu {
     public static void main(String[] args) {
+        final String url = "jdbc:mysql://localhost:3306/school";
+        final String user = "root";
+        final String password = "";
         System.out.println("Escola");
         Scanner scanner = new Scanner(System.in);
         int opcao = 0;
@@ -39,10 +47,19 @@ public class Menu {
                         String nome = scanner.nextLine();
                         System.out.print("Departamento do Professor: ");
                         String departamento = scanner.nextLine();
-                        new Professor(id, nome, departamento); // Cria um novo objeto Professor
+                        
+                        Connection con = DriverManager.getConnection(url, user, password);
+                        Statement stm = con.createStatement();
+                        boolean sql = stm.execute("INSERT INTO Professor "
+                            + "(Id, Nome, Departamento) VALUES "
+                            + "('"+id+"', '"+nome+"', '"+departamento+"')");
+                        if(!sql) {
+                            System.out.println("");
+                        }
+                        con.close();
                     }
                 } catch (Exception e) {
-                    System.out.println("Erro ao cadastrar o Professor");
+                    System.out.println("");
                 }
                 break;
 
@@ -64,10 +81,19 @@ public class Menu {
                         Number cargaHoraria = scanner.nextInt();
                         System.out.print("Id do Professor responsável: ");
                         Number idProfessor = scanner.nextInt();
-                        new Curso(id, nome, cargaHoraria, idProfessor); // Cria um novo objeto Curso
+                        
+                        Connection con = DriverManager.getConnection(url, user, password);
+                        Statement stm = con.createStatement();
+                        boolean sql = stm.execute("INSERT INTO Curso "
+                            + "(Id, nome, cargaHoraria, idProfessor) VALUES "
+                            + "('"+id+"','"+nome+"', '"+cargaHoraria+"', '"+idProfessor+"')");
+                        if(!sql) {
+                            System.out.println("");
+                        }
+                        con.close();
                     }
                 } catch (Exception e) {
-                    System.out.println("Erro ao cadastrar o Curso");
+                    System.out.println("");
                 }
                 break;
 
@@ -98,39 +124,84 @@ public class Menu {
                         } else {
                             System.out.print("Id do Curso do Aluno: ");
                             Number idCurso = scanner.nextInt();
-                            new Aluno(id, nome, dataNascimento, cpf, idCurso); // Cria um novo objeto Aluno
+
+                            Connection con = DriverManager.getConnection(url, user, password);
+                            Statement stm = con.createStatement();
+                            boolean sql = stm.execute("INSERT INTO Aluno "
+                                + "(Id, Nome, DataNascimento, CPF, IdCurso) VALUES "
+                                + "('"+id+"', '"+nome+"', '"+dataNascimento+"', '"+cpf+"', '"+idCurso+"')");
+                            if(!sql) {
+                                System.out.println("");
+                            }
+                            con.close();
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("Erro ao cadastrar o Aluno");
+                    System.out.println("");
                 }
                 break;
 
                 case 4:
                 System.out.println("\n Listar Professores");
                 System.out.println("==================");
-                Professor.professores.forEach(professor -> {
-                    System.out.println("\nId: " + professor.Id + " \nNome: " + professor.Nome + " \nDepartamento: " + professor.Departamento);
-                });
-                System.out.println("\n ==================\n");
+                try {
+                    Connection con = DriverManager.getConnection(url, user, password);
+                    Statement stm = con.createStatement();
+                    ResultSet sql = stm.executeQuery("SELECT * FROM Professor;");
+                    while(sql.next()) {
+                        System.out.println(new Professor(
+                            sql.getInt("Id"),
+                            sql.getString("Nome"),
+                            sql.getString("Departamento")
+                        ));
+                    }
+                    con.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
                 break;
 
                 case 5:
                 System.out.println("\n Listar Cursos");
                 System.out.println("==================");
-                Curso.cursos.forEach(curso -> {
-                    System.out.println("\nId: " + curso.Id + " \nNome: " + curso.Nome + " \nCarga Horária: " + curso.CargaHoraria + " \nId Professor: " + curso.IdProfessor);
-                });
-                System.out.println("\n ==================\n");
+                try {
+                    Connection con = DriverManager.getConnection(url, user, password);
+                    Statement stm = con.createStatement();
+                    ResultSet sql = stm.executeQuery("SELECT * FROM Curso;");
+                    while(sql.next()) {
+                        System.out.println(new Curso(
+                            sql.getInt("Id"),
+                            sql.getString("Nome"),
+                            sql.getInt("CargaHoraria"), 
+                            sql.getInt("IdProfessor")
+                        ));
+                    }
+                    con.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
                 break;
 
                 case 6:
                 System.out.println("\n Listar Alunos");
                 System.out.println("==================");
-                Aluno.alunos.forEach(aluno -> {
-                    System.out.println("\nId: " + aluno.Id + " \nNome: " + aluno.Nome + " \nData de Nascimento: " + aluno.DataNascimento + " \nCPF: " + aluno.CPF + " \nId Curso: " + aluno.IdCurso);
-                });
-                System.out.println("\n ==================\n");
+                try {
+                    Connection con = DriverManager.getConnection(url, user, password);
+                    Statement stm = con.createStatement();
+                    ResultSet sql = stm.executeQuery("SELECT * FROM Aluno;");
+                    while(sql.next()) {
+                        System.out.println(new Aluno(
+                            sql.getInt("Id"),
+                            sql.getString("Nome"),
+                            sql.getString("DataNascimento"), 
+                            sql.getString("CPF"),
+                            sql.getInt("IdCurso")
+                        ));
+                    }
+                    con.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
                 break;
 
                 case 7:
